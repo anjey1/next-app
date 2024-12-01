@@ -6,19 +6,20 @@ import { Task } from '../types';
 
 interface TaskFormProps {
   initialTask?: Task;
-  groupId: string;
+  // groupId: string;
   // onSubmit: (taskData: Partial<Task>) => void;
   onCancel: () => void;
 }
 
 export const TaskForm: React.FC<TaskFormProps> = ({
   initialTask,
-  groupId,
+  // groupId,
   // onSubmit,
   onCancel,
 }) => {
   const [title, setTitle] = useState(initialTask?.title || '');
   const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState(null); // State to hold the image preview
   const navigate = useNavigate();
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -27,6 +28,19 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     },
     onDrop: (acceptedFiles) => {
       setImage(acceptedFiles[0]);
+
+      const file = acceptedFiles[0]
+
+      if (file) {
+        const reader = new FileReader();
+  
+        // Read the file and set the preview URL
+        reader.onload = () => {
+          setPreview(reader.result);
+        };
+  
+        reader.readAsDataURL(file); // Read the file as a data URL
+      }
     },
   });
   
@@ -56,16 +70,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Add Group Name Here :</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="flex justify-center items-center mb-8">
+        {/* <h1 className="text-2xl font-bold">Add Group Name Here :</h1> */}
+        <form onSubmit={handleSubmit} className="space-y-10">
           <div>
             <label className="block text-sm font-medium text-gray-700">Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="text-3xl mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
             />
           </div>
@@ -85,11 +99,20 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              className="px-4 py-2 text-lg font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
             >
               {initialTask ? 'Update' : 'Create'} Task
             </button>
           </div>
+          {preview && (
+              <div className="mt-4 flex justify-center items-center">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full max-w-xs h-auto rounded-md"
+                />
+              </div>
+            )}
         </form>
     </div>
   </div>
