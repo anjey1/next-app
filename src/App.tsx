@@ -32,14 +32,6 @@ function App() {
               }
             />
             <Route
-              path="/add"
-              element={
-                <PrivateRoute>
-                  <TaskForm />
-                </PrivateRoute>
-              }
-            />
-            <Route
               path="/discover"
               element={
                 <PrivateRoute>

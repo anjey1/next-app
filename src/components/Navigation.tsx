@@ -27,12 +27,6 @@ export const Navigation: React.FC = () => {
                 Tasks
               </Link>
               <Link
-                to="/add"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900"
-              >
-                Add Task
-              </Link>
-              <Link
                 to="/discover"
                 className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
               >

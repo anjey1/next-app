@@ -7,7 +7,7 @@ interface GroupCardProps {
   tasks: Task[];
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
-  onTaskStatusChange: (taskId: string, status: 'todo' | 'done') => void;
+  onTaskStatusChange: (taskId: Partial<Task>, status: 'todo' | 'done') => void;
 }
 
 export const GroupCard: React.FC<GroupCardProps> = ({

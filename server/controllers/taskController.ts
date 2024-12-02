@@ -59,6 +59,14 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: 'Task not found' });
     }
 
+
+    // TODO: when new file delete old one
+    if (req.file) {
+      req.body.imageUrl = req.file.filename ? `/uploads/${req.file.filename}` : '';
+    }
+
+
+
     const group = await TodoGroup.findById(task.groupId);
     if (!group!.members.includes(req.user!._id as string) && !req.user!.isAdmin) {
       return res.status(403).json({ message: 'Not authorized to update this task' });
