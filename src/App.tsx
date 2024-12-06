@@ -4,11 +4,12 @@ import { TaskList } from './pages/TaskList';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { GroupDiscovery } from './pages/GroupDiscovery';
+import { GroupDetail } from './pages/GroupDetail';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { Navigation } from './components/Navigation';
 import { PrivateRoute } from './components/PrivateRoute';
 import { useAuthStore } from './store/authStore';
-import { TaskForm } from './components/TaskForm';
+import { GroupChatWrapper } from './pages/GroupChat';
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,22 @@ function App() {
               element={
                 <PrivateRoute adminOnly>
                   <AdminDashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/group-details/:groupId"
+              element={
+                <PrivateRoute adminOnly>
+                  <GroupDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/group-chat/:groupId"
+              element={
+                <PrivateRoute>
+                  <GroupChatWrapper />
                 </PrivateRoute>
               }
             />

@@ -7,13 +7,13 @@ export const getMessages = async (req: AuthRequest, res: Response): Promise<void
   try {
     const { groupId } = req.params;
     const group = await TodoGroup.findById(groupId);
-    
+
     if (!group) {
       res.status(404).json({ message: 'Group not found' });
       return;
     }
 
-    if (!group.members.includes(req.user!._id as string)) {
+    if (!group.members.some(member => member._id === req.user!._id)) {
       res.status(403).json({ message: 'Not authorized to view messages' });
       return;
     }
@@ -39,7 +39,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    if (!group.members.includes(req.user!._id as string)) {
+    if (!group.members.some(member => member._id === req.user!._id)) {
       res.status(403).json({ message: 'Not authorized to send messages' });
       return;
     }
@@ -51,7 +51,7 @@ export const sendMessage = async (req: AuthRequest, res: Response): Promise<void
     });
 
     const populatedMessage = await message.populate('userId', 'displayName email');
-    
+
     // Emit the message through Socket.IO
     req.app.get('io').to(groupId).emit('new_message', populatedMessage);
 

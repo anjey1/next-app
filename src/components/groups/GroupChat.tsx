@@ -6,6 +6,7 @@ import { socketService } from '../../services/socket';
 
 interface Message {
   _id: string;
+  groupId: string;
   content: string;
   userId: {
     _id: string;
@@ -16,6 +17,7 @@ interface Message {
 
 interface GroupChatProps {
   groupId: string;
+  messages: Message[];
 }
 
 export const GroupChat: React.FC<GroupChatProps> = ({ groupId }) => {

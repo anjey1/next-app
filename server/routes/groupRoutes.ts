@@ -20,4 +20,6 @@ router.post('/:id/leave', protect, groupController.leaveGroup);
 router.get('/all', protect, adminOnly, groupController.getAllGroups);
 router.put('/:groupId/members', protect, adminOnly, groupController.updateGroupMembers);
 
+router.get('/:groupId/members', groupController.getGroupMembers);
+
 export default router;

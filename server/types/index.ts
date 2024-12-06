@@ -1,7 +1,9 @@
 import { Request } from 'express';
 import { Document } from 'mongoose';
+import { User } from '../../src/types';
 
 export interface UserDocument extends Document {
+  _id: string;
   email: string;
   displayName: string;
   password: string;
@@ -32,7 +34,7 @@ export interface GroupDocument extends Document {
   visibility: 'public' | 'private';
   status: 'todo' | 'done';
   owner: string;
-  members: string[];
+  members: User[];
   createdAt: Date;
   updatedAt: Date;
 }

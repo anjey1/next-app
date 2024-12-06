@@ -19,7 +19,7 @@ export const createTask = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: 'Group not found' });
     }
 
-    if (!group.members.includes(req.user!._id as string) && !req.user!.isAdmin) {
+    if (!group.members.some(member => member._id === req.user!._id) && !req.user!.isAdmin) {
       return res.status(403).json({ message: 'Not authorized to add tasks to this group' });
     }
 
@@ -62,13 +62,16 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
 
     // TODO: when new file delete old one
     if (req.file) {
-      req.body.imageUrl = req.file.filename ? `/uploads/${req.file.filename}` : '';
+      return res.status(400).json({ message: 'No file uploaded' });
     }
 
-
-
     const group = await TodoGroup.findById(task.groupId);
-    if (!group!.members.includes(req.user!._id as string) && !req.user!.isAdmin) {
+
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    if (!group.members.some(member => member._id === req.user!._id) && !req.user!.isAdmin) {
       return res.status(403).json({ message: 'Not authorized to update this task' });
     }
 
@@ -92,7 +95,7 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
     }
 
     const group = await TodoGroup.findById(task.groupId);
-    if (!group!.members.includes(req.user!._id as string) && !req.user!.isAdmin) {
+    if (!(group!.members.some(member => member._id == req.user?._id)) && !req.user!.isAdmin) {
       return res.status(403).json({ message: 'Not authorized to delete this task' });
     }
 

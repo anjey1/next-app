@@ -1,9 +1,10 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { api } from '../../services/api';
+import { TodoGroup } from '../../types/index';
 
 interface CreateGroupFormProps {
-  onGroupCreated: () => void;
+  onGroupCreated: (data: Partial<TodoGroup>) => void;
 }
 
 interface GroupFormData {
@@ -17,9 +18,8 @@ export const CreateGroupForm: React.FC<CreateGroupFormProps> = ({ onGroupCreated
 
   const onSubmit = async (data: GroupFormData) => {
     try {
-      await api.post('/groups', data);
       reset();
-      onGroupCreated();
+      onGroupCreated(data);
     } catch (error) {
       console.error('Failed to create group:', error);
     }

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MemberManagement } from '../components/groups/MemberManagement';
+import { GroupChat } from '../components/groups/GroupChat';
 import { useAuthStore } from '../store/authStore';
 import * as api from '../services/api';
 
-export const GroupDetail: React.FC = () => {
+export const GroupChatWrapper: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const { user } = useAuthStore();
 
@@ -15,6 +15,11 @@ export const GroupDetail: React.FC = () => {
     enabled: !!groupId
   });
 
+  const { data: messages } = useQuery({
+    queryKey: ['messages', groupId],
+    queryFn: () => groupId ? api.getMessages(groupId) : Promise.resolve([]),
+    enabled: !!groupId
+  });
 
   if (isLoading || !group) {
     return <div>Loading...</div>;
@@ -28,14 +33,13 @@ export const GroupDetail: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {user?.isAdmin && (
-          <div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold mb-4">Manage Members</h2>
-              <MemberManagement groupId={groupId!} />
-            </div>
-          </div>
-        )}
+        <div className="lg:col-span-2">
+          <GroupChat
+            groupId={groupId!}
+            messages={messages || []}
+            onSendMessage={(content) => api.sendMessage(groupId!, content)}
+          />
+        </div>        
       </div>
     </div>
   );

@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
+// import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
+import { Task } from '../../types';
 
 interface Group {
   _id: string;
   name: string;
+
   description: string;
   visibility: 'public' | 'private';
   members: string[];
@@ -13,31 +15,33 @@ interface Group {
 }
 
 interface GroupListProps {
-  groups: Group[];
+  groups:{
+    data:Group[];
+  } 
   isAdmin?: boolean;
+  data: Task[];
   onGroupUpdated: () => void;
 }
 
-export const GroupList: React.FC<GroupListProps> = ({ groups, isAdmin, onGroupUpdated }) => {
+export const GroupList: React.FC<GroupListProps> = ({ groups, isAdmin }) => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  //const { user } = useAuthStore();
 
   const handleDeleteGroup = async (groupId: string) => {
     try {
       await api.delete(`/groups/${groupId}`);
-      onGroupUpdated();
     } catch (error) {
       console.error('Failed to delete group:', error);
     }
   };
 
   const handleManageMembers = (groupId: string) => {
-    navigate(`/groups/${groupId}/members`);
+    navigate(`/group-details/${groupId}`);
   };
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {groups.map((group) => (
+      {groups?.data?.map((group) => (
         <div key={group._id} className="bg-white shadow-md rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-2">{group.name}</h3>
           <p className="text-gray-600 mb-4">{group.description}</p>

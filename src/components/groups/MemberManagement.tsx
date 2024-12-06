@@ -30,7 +30,7 @@ export const MemberManagement: React.FC<MemberManagementProps> = ({ groupId, onU
 
   useEffect(() => {
     if (currentMembers) {
-      setSelectedUsers(currentMembers.map((member: User) => member._id));
+      setSelectedUsers(currentMembers.members.map((member: User) => member._id));
     }
   }, [currentMembers]);
 
@@ -64,7 +64,7 @@ export const MemberManagement: React.FC<MemberManagementProps> = ({ groupId, onU
       </div>
 
       <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
-        {users?.map((user: User) => (
+        {currentMembers?.members?.map((user: User) => (
           <div
             key={user._id}
             className="flex items-center justify-between p-3 hover:bg-gray-50"

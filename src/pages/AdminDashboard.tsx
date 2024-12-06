@@ -45,7 +45,9 @@ export const AdminDashboard: React.FC = () => {
       
       <div className="mb-8">
         <h2 className="text-2xl font-semibold mb-4">Create New Group</h2>
-        <CreateGroupForm onSubmit={(data) => createGroupMutation.mutate(data)} />
+        <CreateGroupForm 
+          onGroupCreated = { (data:Partial<TodoGroup>) => createGroupMutation.mutate(data)}
+         />
       </div>
 
       <div>

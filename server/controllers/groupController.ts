@@ -77,7 +77,7 @@ export const deleteGroup = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    await Task.deleteMany({ groupId: group._id });
+    await Task.deleteMany({ groupId: group?._id?.toString() });
     await group.deleteOne();
 
     res.json({ message: 'Group removed' });
@@ -99,12 +99,12 @@ export const joinGroup = async (req: AuthRequest, res: Response): Promise<void> 
       return;
     }
 
-    if (group.members.includes(req.user!._id as string)) {
+    if (group.members.some(member => member._id === req.user!._id)) {
       res.status(400).json({ message: 'Already a member of this group' });
       return;
     }
 
-    group.members.push(req.user!._id as string);
+    group.members.push(req.user!);
     await group.save();
 
     res.json(group);
@@ -128,7 +128,7 @@ export const leaveGroup = async (req: AuthRequest, res: Response): Promise<void>
 
     if (req.user!._id) {
       group.members = group.members.filter(
-        (memberId) => memberId.toString() !== req.user!._id
+        (memberId) => memberId.toString() !== req.user!._id.toString()
       );
     }
 
@@ -175,3 +175,48 @@ export const updateGroupMembers = async (req: AuthRequest, res: Response): Promi
     res.status(500).json({ message: error instanceof Error ? error.message : 'An error occurred' });
   }
 };
+
+
+
+export const getGroupMembers = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { groupId } = req.params;
+
+    const group = await TodoGroup.findById(groupId);
+    if (!group) {
+      res.status(404).json({ message: 'Group not found' });
+      return;
+    }
+
+    const groupMembers = await group.populate('members', 'displayName email');
+    res.json(groupMembers);
+  } catch (error) {
+    res.status(500).json({ message: error instanceof Error ? error.message : 'An error occurred' });
+  }
+
+}
+
+
+export const searchGroupMembers = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { groupId } = req.params;
+    const { q } = req.query;
+
+    const group = await TodoGroup.findById(groupId);
+    if (!group) {
+      res.status(404).json({ message: 'Group not found' });
+      return;
+    }
+
+    // Example with MongoDB:
+    // Use a regular expression to perform a case-insensitive match
+    const users = group.members.filter(member => new RegExp(q as string, 'i').test(member.displayName));
+
+    //const groupMembers = await group.populate('members', 'displayName email');
+
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error instanceof Error ? error.message : 'An error occurred' });
+  }
+
+}
